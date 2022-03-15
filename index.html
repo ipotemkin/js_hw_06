@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <style>
+        .custom-star {
+            color: gold;
+        }
+        .content {
+            display: flex;
+            justify-content: center;
+            margin-top: 200px;
+        }
+        .tooltip__popup {
+            position: absolute;
+            padding: 2px 3px;
+            border-radius: 0px 3px 3px 0px;
+            border: 1px solid #3333;
+            border-left: none;
+            box-shadow: #3333 2px 2px 2px;
+            /* background-color: aqua; */
+            background: white;
+        }
+        .tooltip__popup::before {
+            position: absolute;
+            left: -8.5px;
+            top: 2.5px;
+            z-index: -1;
+            
+            display: inline-block;
+
+            content: '';
+           
+            width: 15.5px;
+            height: 15.5px;
+            
+            transform: rotate(45deg);
+
+            border: 1px solid #3333;
+            /* box-shadow: #3333 2px 2px 2px; */
+            background: white;
+        }
+        .tooltip__popup_hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <i class="fa fa-telegram" aria-hidden="true"></i><br>
+    <main class="content">
+        <i class="fa fa-info tooltip" aria-hidden="true" data-tooltip="Важная информация"></i><br>
+    </main>
+    <i class="fa fa-info tooltip" aria-hidden="true" data-tooltip="Неважная информация"></i><br>
+    <i class="fa fa-star custom-star" aria-hidden="true" data-value="1"></i>
+    <i class="fa fa-star custom-star" aria-hidden="true" data-value="2"></i>
+    <i class="fa fa-star-half-o custom-star" aria-hidden="true" data-value="3"></i>
+    <i class="fa fa-star-o custom-star" aria-hidden="true" data-value="4"></i>
+    <i class="fa fa-star-o custom-star" aria-hidden="true" data-value="5"></i>
+    <script>
+        let app = {
+            currentTooltipTimer: undefined,
+        }
+
+        const stars = document.querySelectorAll('.custom-star');
+        const tooltips = document.querySelectorAll('.tooltip');
+        const tooltipPopup = document.createElement('div');
+        tooltipPopup.classList.add('tooltip__popup', 'tooltip__popup_hidden');
+        document.body.appendChild(tooltipPopup);
+        tooltipPopup.textContent = 'Test';
+
+        function hideTooltip(event) {
+            // const tooltip = event.target;
+            tooltipPopup.classList.add('tooltip__popup_hidden');
+            // tooltip.removeEventListener('mouseleave', hideTooltip);
+        }
+        
+
+        function showTooltip(event) {
+            if (app.currentTooltipTimer) {
+                clearTimeout(app.currentTooltipTimer);
+                // app.currentTooltipTimer = undefined;
+            }
+            console.log('tooltip');
+            const tooltip = event.target;
+            console.log(tooltip.dataset.tooltip);
+            tooltipPopup.textContent = tooltip.dataset.tooltip;
+            tooltipPopup.classList.remove('tooltip__popup_hidden');
+            // console.log(tooltip.getBoundingClientRect());
+            
+            const coords = tooltip.getBoundingClientRect();
+            tooltipPopup.style.left = coords.right + window.scrollX + 15 + 'px';
+            tooltipPopup.style.top = coords.top + window.scrollY + (tooltip.offsetHeight - tooltipPopup.offsetHeight)/2 + 'px';
+            // tooltip.addEventListener('mouseleave', hideTooltip);
+            
+            app.currentTooltipTimer = setTimeout(hideTooltip, 5000);
+        }
+        
+        tooltips.forEach(tooltip => {
+            tooltip.addEventListener('mouseenter', showTooltip);
+        });
+
+        function starOnClick(event) {
+            // console.log(event.target);
+            // console.log('star');
+            const star = event.target; 
+            console.log(star.dataset.value);
+        }
+
+        stars.forEach(element => {
+            element.addEventListener('mouseenter', starOnClick);
+            // element.addEventListener()
+        });
+
+        const variable = 'city';
+        
+        // if (variable === 'city' || variable === 'town') {
+        //     console.log(variable);
+        // }
+        
+        // if (variable in {'city': 1, 'town': 2}) {
+        //     console.log(variable);
+        // }
+
+        if (['city', 'town'].includes(variable)) {
+            console.log(variable);
+        }
+
+    </script>
+</body>
+</html>

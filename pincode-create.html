@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create PIN code</title>
+</head>
+<body>
+    <input type="text" class="pincode-create-input">
+    <button class="pincode-create-btn">Сохранить</button><br>
+    <script>
+        // const pincodeCreateInput = document.querySelector('.pincode-create-input');
+        // pincodeCreateInput.value = 'test 2';
+        let pincode = '';
+
+        function isNumber(data) {
+            return true;
+        }
+
+        class PinInputCreate {
+            constructor(element) {
+                this.inputElement = element;
+                if (typeof element === 'string') {
+                    this.inputElement = document.querySelector(element);
+                    if (!this.inputElement) throw new Error('No element with selector ' + element);
+                    if (this.inputElement.tagName !== 'INPUT') throw new Error('Supports only input');
+                }
+                this.onInput = this.onInput.bind(this);
+                this.inputElement.addEventListener('input', this.onInput);
+            }
+            onInput() {
+                // console.log('click');
+                // console.log(this.inputElement.value);
+                
+                if (this.errorText !== undefined) {
+                        document.body.removeChild(this.errorText);
+                        this.errorText = undefined;
+                    }
+                
+                if (isNaN(this.inputElement.value)) {
+                    this.errorText = document.createTextNode('Not a number');
+                    document.body.appendChild(this.errorText);
+                }
+            }
+            getValue() {
+                return this.inputElement.value;
+            }
+        }
+        // const myInput = document.createElement('input');
+        // document.body.appendChild(myInput);
+        // const pincodeCreateInput = new PinInputCreate(myInput);
+        
+        const pincodeCreateInput = new PinInputCreate('.pincode-create-input');
+        const button = document.querySelector('.pincode-create-btn');
+        button.onclick = () => {
+            const pincode_ = pincodeCreateInput.getValue();
+            if (!isNaN(pincode_) && pincode_ !== '') {
+                pincode = pincode_;
+                console.log('PIN: ' + pincode);
+                document.body.innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>
