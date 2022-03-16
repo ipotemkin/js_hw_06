@@ -20,16 +20,12 @@
                 this.form = document.createElement('form');
                 
                 this.pinInput = document.createElement('input');
-                // this.pinInput.value = 'Test';
-                // pinInput.style.margin = '10px';
                 
                 this.pinBtn = document.createElement('button');
                 this.pinBtn.style.margin = '10px';
                 this.pinBtn.textContent = 'Сохранить';
                 
                 const br = document.createElement('br');
-                // const textElement = document.createTextNode('Error');
-                // textElement.style.backgroundColor = 'red';
                 
                 this.form.appendChild(this.pinInput);
                 this.form.appendChild(this.pinBtn);
@@ -75,8 +71,6 @@
                     console.log('PIN: ' + pincode);
                     this.form.innerHTML = '';
                     const pinEnter = new PinEnter(pincode);
-                    // document.body.innerHTML = '';
-                    // event.preventDefault();
                 }
             }
             getValue() {
@@ -88,6 +82,7 @@
         class PinEnter {
             constructor(pincode) {
                 this.pincode = pincode;
+                
                 this.form = document.createElement('form');
                 
                 for(let i = 0; i < pincode.length; i++) {
@@ -116,17 +111,21 @@
             }
             onInput(event) {
                 let target = event.target;
+                
+                // if more than one digit, put them to the next input fields
                 if (target.value.length > 1) {
                     let temp = target.value;
                     target.value = temp[0];
                     target = this.fillNextInput(temp.slice(1), target);
                 }              
                 
+                // to focus on the current input field
                 if (target.value.length === 0) {
                     target.focus();
                     return;
                 }
 
+                // to focus on the next input field or on the submit button
                 if (target.tagName === 'INPUT') {
                     target.nextSibling.focus();
                 } else {
