@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create PIN code</title>
+    <style>
+        * {
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let pincode = '';
+
+        class PinCreate {
+            constructor() {
+                this.form = document.createElement('form');
+                
+                this.pinInput = document.createElement('input');
+                // this.pinInput.value = 'Test';
+                // pinInput.style.margin = '10px';
+                
+                this.pinBtn = document.createElement('button');
+                this.pinBtn.style.margin = '10px';
+                this.pinBtn.textContent = 'Сохранить';
+                
+                const br = document.createElement('br');
+                // const textElement = document.createTextNode('Error');
+                // textElement.style.backgroundColor = 'red';
+                
+                this.form.appendChild(this.pinInput);
+                this.form.appendChild(this.pinBtn);
+                this.form.appendChild(br);
+                
+                this.errorText = document.createElement('div');
+                this.errorText.textContent = 'Not a number';
+                this.errorText.style.color = 'red';
+                this.errorText.style.display = 'none';
+                this.form.appendChild(this.errorText);
+
+                document.body.appendChild(this.form);
+
+                console.log(this.pinInput);
+                this.onInput = this.onInput.bind(this);
+                this.pinInput.addEventListener('input', this.onInput);
+
+                this.onClick = this.onClick.bind(this);
+                this.pinBtn.addEventListener('click', this.onClick);
+
+            }
+            showError() {
+                this.errorText.style.display = 'block';
+
+            }
+            hideError() {
+                this.errorText.style.display = 'none';
+
+            }
+            onInput() {
+                if (isNaN(this.pinInput.value)) {
+                    this.showError();
+                    return;
+                }
+                this.hideError();                
+            }
+            onClick(event) {
+                event.preventDefault();
+
+                const pincode_ = this.getValue();
+                if (!isNaN(pincode_) && pincode_ !== '') {
+                    pincode = pincode_;
+                    console.log('PIN: ' + pincode);
+                    this.form.innerHTML = '';
+                    const pinEnter = new PinEnter(pincode);
+                    // document.body.innerHTML = '';
+                    // event.preventDefault();
+                }
+            }
+            getValue() {
+                return this.pinInput.value;
+            }
+
+        }
+        
+        class PinEnter {
+            constructor(pincode) {
+                this.pincode = pincode;
+                this.form = document.createElement('form');
+                
+                for(let i = 0; i < pincode.length; i++) {
+                    const pinInput = document.createElement('input');
+                    pinInput.style.width = '10px';
+                    pinInput.style.margin = '5px';
+                    this.form.appendChild(pinInput);
+                }
+                
+                this.pinBtn = document.createElement('button');
+                this.pinBtn.style.margin = '10px';
+                this.pinBtn.textContent = 'Ввод';
+                this.form.appendChild(this.pinBtn);
+                
+                document.body.appendChild(this.form);
+
+                this.onInput = this.onInput.bind(this);
+                this.onSubmit = this.onSubmit.bind(this);
+
+                this.inputs = this.form.querySelectorAll('input');
+                this.inputs.forEach(element => {
+                    element.addEventListener('input', this.onInput);
+                });
+                this.pinBtn.addEventListener('click', this.onSubmit);
+                this.inputs[0].focus();
+            }
+            onInput(event) {
+                let target = event.target;
+                if (target.value.length > 1) {
+                    let temp = target.value;
+                    target.value = temp[0];
+                    target = this.fillNextInput(temp.slice(1), target);
+                }              
+                
+                if (target.value.length === 0) {
+                    target.focus();
+                    return;
+                }
+
+                if (target.tagName === 'INPUT') {
+                    target.nextSibling.focus();
+                } else {
+                    this.pinBtn.focus();
+                }
+            }
+            fillNextInput(text, target) {
+                let next = target.nextSibling;
+                
+                if (!next || next.tagName !== 'INPUT') return target;
+                
+                next.value = text[0];
+                
+                if (text.length > 1) next = this.fillNextInput(text.slice(1), next);
+                
+                return next;
+            }
+            getValue() {
+                let result = '';
+                this.inputs.forEach(element => {
+                    result += element.value;
+                });
+                return result;
+            }
+            clearValue() {
+                this.inputs.forEach(element => {
+                    element.value = '';
+                });
+            }
+            onSubmit(event) {
+                event.preventDefault();
+                const enteredPincode = this.getValue();
+                console.log(enteredPincode);
+                if (enteredPincode === this.pincode) {
+                    console.log('Pin is OK!');
+                    this.form.innerHTML = '';
+                    alert('Pin is OK!');
+                } else {
+                    console.log('Incorrect pin!');
+                    alert('Incorrect pin!');
+                    this.clearValue();
+                    this.inputs[0].focus();
+                }
+            }
+        }
+
+        const pinForm = new PinCreate();
+        
+    </script>
+</body>
+</html>
